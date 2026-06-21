@@ -744,7 +744,7 @@
       askMetodo();return;
     }
     if(chat.step==="ask_desc"){chat.draft.desc=cap(value);chat.draft.categoria=categFromDesc(value);askMetodo();return;}
-    if(chat.step==="metodo"){chat.draft.metodo=normMetodo(value);if(chat.draft.metodo==="credito"){chat.draft.pago=false;botMsg("No crédito eu já marco como <b>a pagar</b>.");confirmCateg();return;}botMsg("E aí, já está pago?");setChips([{label:"Já paguei",value:"pago"},{label:"Vou pagar",value:"apagar"}]);chat.step="pago";return;}
+    if(chat.step==="metodo"){chat.draft.metodo=normMetodo(value);if(chat.draft.metodo==="credito"){chat.draft.pago=true;botMsg("No crédito eu já marco como <b>a pagar</b>.");confirmCateg();return;}botMsg("E aí, já está pago?");setChips([{label:"Já paguei",value:"pago"},{label:"Vou pagar",value:"apagar"}]);chat.step="pago";return;}
     if(chat.step==="pago"){chat.draft.pago=/pago|paguei|sim|j[áa]|quitad/i.test(value);confirmCateg();return;}
     if(chat.step==="categoria_confirm"){if(/trocar|mudar|outra|n[ãa]o/i.test(value)){showCategChips();return;}askTipo();return;}
     if(chat.step==="categoria_pick"){if(allCats().some(function(c){return c.n===value;}))chat.draft.categoria=value;askTipo();return;}
