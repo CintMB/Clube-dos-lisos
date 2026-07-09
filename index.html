@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>&#128123; Clube dos Lisos · controle de gastos</title>
+<title>Clube dos Lisos v1 — controle financeiro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -46,7 +46,7 @@
 
     <div id="comoFunciona" class="howto">
       <h2 class="howto-title">Como funciona</h2>
-      <div class="step"><span class="step-n">1</span><div><b>Traga seus gastos</b><span>Importe a fatura, histórico de outros apss ou registre direto no chat: escreva "25 em Uber" e pronto.</span></div></div>
+      <div class="step"><span class="step-n">1</span><div><b>Traga seus gastos</b><span>Importe a fatura ou registre no chat: escreve "25 em Uber" e pronto.</span></div></div>
       <div class="step"><span class="step-n">2</span><div><b>Veja a real do mês</b><span>Saldo, gasto por categoria, o que falta pagar e o termômetro que avisa quando dá pra relaxar (ou frear).</span></div></div>
       <div class="step"><span class="step-n">3</span><div><b>Se organize de leve</b><span>Defina metas por categoria com base na sua renda e cadastre gastos fixos e parcelas, que se repetem sozinhos.</span></div></div>
       <button class="cta" data-go="visao" type="button" style="margin-top:18px">Bora começar</button>
@@ -73,14 +73,16 @@
         <span class="val num" id="sobraVal">—</span>
       </div>
       <div class="bar"><div class="bar-spent" id="barSpent" style="width:0%"></div></div>
-      <div class="legend"><span><i style="background:#F23E63"></i>gasto</span><span><i style="background:#2BB98C"></i>sobra</span></div>
+      <div class="legend"><span><i style="background:#C65D4E"></i>gasto</span><span><i style="background:#7C8A67"></i>sobra</span></div>
       <div class="verdict-line" id="verdict">Informe sua renda pra ver quanto sobra no mês.</div>
     </div>
 
+    <div id="metodoCard"></div>
     <div id="welcome"></div>
     <div id="termometro"></div>
     <div id="aPagarCard"></div>
     <div id="aReceberCard"></div>
+    <div id="entradasCard"></div>
 
     <div class="sec-head" style="margin-top:20px"><h2>Resumo</h2>
       <select id="monthSel" aria-label="Escolher mês"></select>
@@ -90,6 +92,7 @@
     <div class="sec-head"><h2>Por categoria</h2>
       <button class="ftoggle" id="sugBtn" type="button">Sugerir metas</button>
     </div>
+    <p class="note" style="margin:0 2px 8px">Toque numa categoria pra ver os gastos dela e editar.</p>
     <p class="note" id="catProj" style="margin:0 2px 12px"></p>
     <div class="cats" id="cats"></div>
     <p class="note">Toque no valor da meta pra ajustar. As sugestões são uma referência saudável — ajuste pro seu momento.</p>
@@ -129,6 +132,14 @@
       <div id="importArea"></div>
     </div>
 
+    <div class="sec-head"><h2>Categorias de gasto</h2></div>
+    <div class="panel">
+      <details class="howto-notion" id="gastoCatManage">
+        <summary>Gerenciar categorias de gasto</summary>
+        <div id="gastoCatBody" class="vcat-manage"></div>
+      </details>
+    </div>
+
     <div class="sec-head"><h2>Adicionar manualmente</h2></div>
     <div class="panel">
       <div class="form-grid">
@@ -136,6 +147,12 @@
         <div><label id="fValLab">Valor (R$)</label><input class="inp num-in" id="fVal" inputmode="decimal" placeholder="0,00"></div>
         <div><label>Data</label><input class="inp" id="fData" type="date"></div>
         <div class="full"><label>Categoria</label><select class="inp" id="fCat"></select></div>
+        <div class="full"><label>Como pagou</label><select class="inp" id="fMetodo">
+          <option value="credito">Crédito (vai pra fatura)</option>
+          <option value="pix">Pix</option>
+          <option value="debito">Débito</option>
+          <option value="dinheiro">Dinheiro</option>
+        </select></div>
         <div class="full"><label>Tipo</label><select class="inp" id="fTipo">
           <option value="unico">Gasto único</option>
           <option value="fixo">Fixo — repete todo mês</option>
@@ -147,11 +164,29 @@
       </div>
     </div>
 
+    <div class="sec-head"><h2>Entradas <span id="entTotal" class="count-pill" style="color:var(--mint-ink)"></span></h2></div>
+    <p class="tab-sub" id="entSec" style="margin:-6px 2px 14px">Recebeu algo que compensa um gasto — reembolso, presente ou alguém te pagando o que devia? Registre aqui que eu <b>abato do total do mês</b>.</p>
+    <div class="panel">
+      <div class="form-grid">
+        <div class="full"><label>Descrição</label><input class="inp" id="eDesc" placeholder="Ex.: Reembolso consulta, Ana me pagou o rodízio"></div>
+        <div><label>Valor (R$)</label><input class="inp num-in" id="eVal" inputmode="decimal" placeholder="0,00"></div>
+        <div><label>Data</label><input class="inp" id="eData" type="date"></div>
+        <div class="full"><label>Tipo</label><select class="inp" id="eTipo">
+          <option value="devido">Valor devido — alguém me devia</option>
+          <option value="presente">Presente</option>
+          <option value="reembolso">Reembolso convênio</option>
+        </select></div>
+        <button class="btn" id="addEntradaBtn">Adicionar entrada</button>
+      </div>
+    </div>
+    <div class="tx-list" id="entList" style="margin-top:12px"></div>
+
     <div class="sec-head"><h2>Fixos e parcelamentos</h2></div>
     <div id="rulesBox"></div>
 
     <div class="sec-head" style="flex-wrap:wrap"><h2>Lançamentos <span id="txCount" class="count-pill"></span></h2>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <select id="monthSelGastos" aria-label="Escolher mês"></select>
         <button class="ftoggle" id="reloadBtn" type="button" title="Recarregar" aria-label="Recarregar">↻</button>
         <button class="ftoggle" id="payToggle" type="button">A pagar</button>
         <button class="ftoggle" id="recvToggle" type="button">A receber</button>
@@ -259,6 +294,24 @@
     <div class="chat-msgs" id="chatMsgs"></div>
     <div class="chat-chips" id="chatChips"></div>
     <div class="chat-input"><input id="chatText" placeholder="Ex.: 25 em Uber" autocomplete="off"><button id="chatSend" type="button" aria-label="Enviar">➤</button></div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="recvSheet" hidden>
+  <div class="sheet">
+    <div class="sheet-head"><span>Recebido como?</span><button class="chat-close" id="recvCancel" type="button" aria-label="Fechar">×</button></div>
+    <div class="sheet-body">
+      <button class="sheet-opt" data-rtipo="devido" type="button"><i style="background:#7C8A67"></i>Valor devido<small>alguém me devia</small></button>
+      <button class="sheet-opt" data-rtipo="presente" type="button"><i style="background:#C98A4B"></i>Presente<small>me deram</small></button>
+      <button class="sheet-opt" data-rtipo="reembolso" type="button"><i style="background:#6E8C94"></i>Reembolso convênio<small>plano/empresa</small></button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="catDetail" hidden>
+  <div class="sheet">
+    <div class="sheet-head"><span id="catDetailTitle">Categoria</span><button class="chat-close" id="catDetailClose" type="button" aria-label="Fechar">×</button></div>
+    <div class="sheet-body" id="catDetailBody"></div>
   </div>
 </div>
 
